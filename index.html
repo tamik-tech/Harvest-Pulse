@@ -5,61 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор формул</title>
     <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --input-bg: white;
+            --btn-bg: #007BFF;
+            --btn-hover: #0056b3;
+            --result-bg: #e0e0e0;
+        }
+        body.dark-mode {
+            --bg-color: #222;
+            --text-color: #fff;
+            --input-bg: #333;
+            --btn-bg: #ff9800;
+            --btn-hover: #e68900;
+            --result-bg: #444;
+        }
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background: var(--bg-color);
+            color: var(--text-color);
             margin: 20px;
+            transition: 0.3s;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: var(--result-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
         input {
             width: 80px;
-            padding: 5px;
+            padding: 8px;
             margin: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background: var(--input-bg);
+            color: var(--text-color);
         }
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             margin: 10px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: var(--btn-bg);
+            color: white;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: var(--btn-hover);
         }
         .result {
             font-size: 18px;
             margin-top: 15px;
             font-weight: bold;
+            cursor: pointer;
+        }
+        .result:hover {
+            text-decoration: underline;
+        }
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 18px;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        canvas {
+            margin-top: 20px;
+            border-radius: 10px;
+            background: white;
         }
     </style>
 </head>
 <body>
 
-    <h2>Калькулятор формул</h2>
+    <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
 
-    <label>A: <input type="number" id="A" value="-6"></label>
-    <label>B: <input type="number" id="B" value="1.64"></label>
-    <label>C: <input type="number" id="C" value="0.16"></label>
-    <label>D: <input type="number" id="D" value="0.8"></label>
+    <div class="container">
+        <h2>Калькулятор формул</h2>
 
-    <br>
-    <button onclick="calculate()">Рассчитать</button>
+        <label>A: <input type="number" id="A" value="-6"></label>
+        <label>B: <input type="number" id="B" value="1.64"></label>
+        <label>C: <input type="number" id="C" value="0.16"></label>
+        <label>D: <input type="number" id="D" value="0.8"></label>
 
-    <div class="result" id="result10"></div>
-    <div class="result" id="result12"></div>
+        <br>
+        <button onclick="calculate()">Рассчитать</button>
+
+        <div class="result" id="result10" onclick="copyToClipboard('result10')"></div>
+        <div class="result" id="result12" onclick="copyToClipboard('result12')"></div>
+
+        <canvas id="chart" width="400" height="200"></canvas>
+    </div>
 
     <script>
         function calculate() {
-            // Получаем значения из полей ввода
             let A = parseFloat(document.getElementById("A").value);
             let B = parseFloat(document.getElementById("B").value);
             let C = parseFloat(document.getElementById("C").value);
             let D = parseFloat(document.getElementById("D").value);
 
-            // Вычисление 10 варианта
             let Y10 = (A / B - 1) / (C / (D - 1));
-
-            // Вычисление 12 варианта
             let sum = A + B + C + D;
             let Y12 = Math.pow(Math.sin(sum), 2) - Math.sqrt(Math.log10(A - C));
 
-            // Вывод результатов
-            document.getElementById("result10").innerHTML = `Результат (10 вариант): ${Y10.toFixed(6)}`;
-            document.getElementById("result12").innerHTML = `Результат (12 вариант): ${Y12.toFixed(6)}`;
+            document.getElementById("result10").innerHTML = `10 вариант: ${Y10.toFixed(6)}`;
+            document.getElementById("result12").innerHTML = `12 вариант: ${Y12.toFixed(6)}`;
+
+            drawChart(Y10, Y12);
+        }
+
+        function copyToClipboard(id) {
+            let text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert("Скопировано: " + text);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+            let themeIcon = document.querySelector(".theme-toggle");
+            themeIcon.innerHTML = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+        }
+
+        function drawChart(y1, y2) {
+            let canvas = document.getElementById("chart");
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "blue";
+            ctx.fillRect(100, 200 - Math.abs(y1) * 10, 50, Math.abs(y1) * 10);
+            ctx.fillStyle = "red";
+            ctx.fillRect(250, 200 - Math.abs(y2) * 10, 50, Math.abs(y2) * 10);
+
+            ctx.fillStyle = "black";
+            ctx.font = "14px Arial";
+            ctx.fillText("10 вариант", 100, 190);
+            ctx.fillText("12 вариант", 250, 190);
         }
     </script>
 
