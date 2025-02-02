@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор формул</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input {
+            width: 80px;
+            padding: 5px;
+            margin: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .result {
+            font-size: 18px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Калькулятор формул</h2>
+
+    <label>A: <input type="number" id="A" value="-6"></label>
+    <label>B: <input type="number" id="B" value="1.64"></label>
+    <label>C: <input type="number" id="C" value="0.16"></label>
+    <label>D: <input type="number" id="D" value="0.8"></label>
+
+    <br>
+    <button onclick="calculate()">Рассчитать</button>
+
+    <div class="result" id="result10"></div>
+    <div class="result" id="result12"></div>
+
+    <script>
+        function calculate() {
+            // Получаем значения из полей ввода
+            let A = parseFloat(document.getElementById("A").value);
+            let B = parseFloat(document.getElementById("B").value);
+            let C = parseFloat(document.getElementById("C").value);
+            let D = parseFloat(document.getElementById("D").value);
+
+            // Вычисление 10 варианта
+            let Y10 = (A / B - 1) / (C / (D - 1));
+
+            // Вычисление 12 варианта
+            let sum = A + B + C + D;
+            let Y12 = Math.pow(Math.sin(sum), 2) - Math.sqrt(Math.log10(A - C));
+
+            // Вывод результатов
+            document.getElementById("result10").innerHTML = `Результат (10 вариант): ${Y10.toFixed(6)}`;
+            document.getElementById("result12").innerHTML = `Результат (12 вариант): ${Y12.toFixed(6)}`;
+        }
+    </script>
+
+</body>
+</html>
